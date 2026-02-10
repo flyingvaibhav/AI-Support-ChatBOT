@@ -133,22 +133,7 @@ function HomeClient({ email }: { email: string}) {
   </div>
 </section>
 
-<section>
-  id ="feature"
-  <div className="bg-zinc-50 py-28 px-6 border-t border-zinc-200">
-  <div className='max-w-6xl mx-auto'>
-    <motion.h2
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false }}
-      transition={{ duration: 0.5 }}
-      className='text-3xl font-semibold text-center'
-    >
-      Why Businesses Choose SupportAI
-    </motion.h2>
-  </div>
-</div>
-</section>
+
 
   </div>
   )
