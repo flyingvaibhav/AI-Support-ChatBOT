@@ -25,6 +25,21 @@ function HomeClient({ email }: { email: string}) {
     }
   }, 
     [])
+
+    const features = [
+      {
+        title: "Plug and Play",
+        desc:"Add the chatbot to your website with a single line of code. No complex setup required."
+      },
+      {
+        title:"Admin Controlled",
+        desc:"You control excatly what AI knows and answers."
+      },
+      {
+        title:"Always Online",
+        desc:"Your customers get instant support 24/7."
+      }
+    ]
   return (
     <div className='min-h-screen bg-linear-to-br from-white to-zinc-50 text-zinc-900 overflow-x-hidden'>
     <motion.div
@@ -133,8 +148,42 @@ function HomeClient({ email }: { email: string}) {
   </div>
 </section>
 
+<section id="feature" className='py-28 px-6 border-t border-zinc-200'>
+  <div className='max-w-6xl mx-auto'>
+    <motion.h2
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false }}
+      transition={{ duration: 0.5 }}
+      className='text-3xl font-semibold text-center'
+    >
+      Why Businesses Choose SupportAI
+    </motion.h2>
 
-
+    <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-10">
+  {features.map((f, index) => (
+    <motion.div
+      key={index}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+      viewport={{ once: false }}
+      className="
+        bg-white rounded-2xl
+        p-8 shadow-lg
+        border border-zinc-200
+      "
+    >
+      <h1 className='text-xl font-semibold mb-2'>{f.title}</h1>
+      <p className='mt-3 text-zinc-500 text-sm'>{f.desc}</p>
+    </motion.div>
+  ))}
+</div>
+  </div>
+</section>
+<footer className='py-6 text-center text-zinc-500 text-sm border-t border-zinc-200'   >
+  &copy; 2026 SupportAI. All rights reserved.
+</footer>
   </div>
   )
 }
