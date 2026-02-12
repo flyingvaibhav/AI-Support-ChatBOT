@@ -3,6 +3,8 @@ import React, { use, useEffect, useRef, useState } from 'react'
 import  {motion} from 'motion/react'
 import {button, p} from 'motion/react-client'
 import { AnimatePresence } from 'framer-motion'
+import axios from 'axios'
+import { useRouter } from 'next/navigation' 
 
 function HomeClient({ email }: { email: string}) {
   const handlelogin =()=>{
@@ -25,6 +27,7 @@ function HomeClient({ email }: { email: string}) {
     }
   }, 
     [])
+    const navigate= useRouter()
 
     const features = [
       {
@@ -40,6 +43,15 @@ function HomeClient({ email }: { email: string}) {
         desc:"Your customers get instant support 24/7."
       }
     ]
+   const handleLogout = async ()=>{
+    try{
+const result = await axios.get("/api/auth/logout")
+window.location.href ="/"
+    }
+    catch(err){
+      console.log(err);
+   }
+  }
   return (
     <div className='min-h-screen bg-linear-to-br from-white to-zinc-50 text-zinc-900 overflow-x-hidden'>
     <motion.div
@@ -60,8 +72,8 @@ function HomeClient({ email }: { email: string}) {
 
   className='absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-xl border border-zinc-200 overflow-hidden'
        >
-    <button className='w-full text-left px-4 py-3 text-sm hover:bg-zinc-100'>Dashboard</button>
-    <button className='block w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-zinc-100'>Logout</button>
+    <button className='w-full text-left px-4 py-3 text-sm hover:bg-zinc-100' onClick={()=>navigate.push('/dashboard')}>Dashboard</button>
+    <button className='block w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-zinc-100' onClick={handleLogout}> Logout</button>
        </motion.div>)}
  </AnimatePresence>
          </div> :< button
@@ -93,7 +105,7 @@ function HomeClient({ email }: { email: string}) {
 </p>
 <div className='mt-10 flex gap-4'>
 
-  {email ?<button className=' px-7 py-3 rounded-xl bg-black text-white font-medium hover:bg-zinc-800 transition disabled:opacity-60'>
+  {email ?<button className=' px-7 py-3 rounded-xl bg-black text-white font-medium hover:bg-zinc-800 transition disabled:opacity-60' onClick={()=>navigate.push('/dashboard')}>
     Go to Dashboard
   </button> :<button className=' px-7 py-3 rounded-xl bg-black text-white font-medium hover:bg-zinc-800 transition disabled:opacity-60' onClick={handlelogin}>
     Get Started
