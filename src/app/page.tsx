@@ -1,7 +1,12 @@
-import Image from "next/image";
+import HomeClient from "@/components/HomeClient";
+import {getSession} from "@/lib/getSession";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getSession()
+  console.log("session",session)
   return (
-   <> </>
+   <> 
+   <HomeClient email={session?.user?.email!} />
+   </>
   );
 }
