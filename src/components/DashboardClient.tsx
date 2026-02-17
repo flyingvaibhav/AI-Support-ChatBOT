@@ -1,152 +1,173 @@
 'use client'
+
 import axios from 'axios'
-import { AnimatePresence, scale } from 'framer-motion'
-import { set } from 'mongoose'
-
-
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
+function DashboardClient({ ownerId }: { ownerId: string }) {
 
+  const navigate = useRouter()
 
-function DashboardClient({ownerId}: {ownerId: string }) {
+  const [businessName, setBusinessName] = useState("")
+  const [supportEmail, setSupportEmail] = useState("")
+  const [knowledge, setKnowledge] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [saved, setSaved] = useState(false)
 
-  const naviagte = useRouter()
-  const [businessName, setBusinessName] =useState(" ")
-const [supportEmail, setSupportEmail] =useState(" ")
-const [knowledge, setKnowledge] =useState("")
-const[loading, setLoading] = useState(false)
-const [saved, setsaved] = useState(false)
+  // 🔥 Save Settings
+  const handleSettings = async () => {
+    setLoading(true)
 
-const handleSettings=async()=>{
-  setLoading(true)
+    try {
+      const result = await axios.post('/api/settings', {
+        ownerId,
+        businessName,
+        supportEmail,
+        knowledge
+      })
 
-   try {
-    const result = await axios.post('/api/settings', {
-      ownerId,
-      businessName,
-      supportEmail,
-      knowledge
-    })
-console.log(result.data)
-setsaved(true)
-setLoading(false)
-setTimeout(() => {
-  setsaved(false)
-}, 3000);
+      console.log(result.data)
+
+      setSaved(true)
+      setLoading(false)
+
+      setTimeout(() => {
+        setSaved(false)
+      }, 3000)
+
     } catch (error) {
       console.log(error)
       setLoading(false)
     }
-}
+  }
 
-useEffect(()=>{
-  if(ownerId){
-    const handleGetDetails=async()=>{
+  // 🔥 Get Existing Details
+  useEffect(() => {
+    if (!ownerId) return
+
+    const handleGetDetails = async () => {
       try {
-    const result = await axios.post('/api/settings', {
-      ownerId
-    })
-    setBusinessName(result.data.businessName)
-    setSupportEmail(result.data.supportEmail)
-    setKnowledge(result.data.knowledge)
+        const result = await axios.post('/api/settings', {
+          ownerId
+        })
 
-    } catch (error) {
-      console.log(error)
+        setBusinessName(result.data.businessName ?? "")
+        setSupportEmail(result.data.supportEmail ?? "")
+        setKnowledge(result.data.knowledge ?? "")
+
+      } catch (error) {
+        console.log(error)
+      }
     }
-}
 
-handleGetDetails()    
+    handleGetDetails()
 
-}
+  }, [ownerId])
 
-},[ownerId])
   return (
-    <div className='min-h-screen bg-zinc-50 text-zinc-900 '> 
-    <motion.div
-    initial={{y:-20}}
-    animate={{y:0}}
-    transition={{duration:0.7}}
+    <div className='min-h-screen bg-zinc-50 text-zinc-900'>
 
-    className='fixed top-0 left-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-zinc-200'
-    >
-      <div className='max-w-7xl mx-auto px-6 h-16 flex items-center justify-between'>
-        <div className='text-lg font-semibold tracking-tight'>Support <span className='text-zinc-400'>AI</span></div>
-      <button className='px-4 py-2 rounded-lg border border-zinc-300 text-sm hover:bg-zinc-100 transition-colors'>Embed ChatBot</button>
-        
-      </div>
-    </motion.div>
+      {/* Top Navbar */}
+      <motion.div
+        initial={{ y: -20 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.7 }}
+        className='fixed top-0 left-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-zinc-200'
+      >
+        <div className='max-w-7xl mx-auto px-6 h-16 flex items-center justify-between'>
+          <div className='text-lg font-semibold tracking-tight'>
+            Support <span className='text-zinc-400'>AI</span>
+          </div>
 
-<div className='flex justify-center px-4 py-14 mt-20'>
-  <motion.div
-    className='w-full max-w-3xl bg-white rounded-2xl shadow-xl p-10'
-  >
-    <div className='mb-12'>
-      <h1 className='text-2xl font-semibold'>ChatBot Settings</h1>
-      <p className='text-zinc-500 mt-1'>Manage your AI chatbot knowledge and business details</p>
-    </div>
+          <button className='px-4 py-2 rounded-lg border border-zinc-300 text-sm hover:bg-zinc-100 transition-colors'>
+            Embed ChatBot
+          </button>
+        </div>
+      </motion.div>
 
-<div className='mb-10'>
-  <h1 className='text-lg font-medium mb-4'>Business Details</h1>
-  <div className='space-y-4'>
-    <input 
-      type="text" 
-      className='w-full rounded-xl border border-zinc-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/80' 
-      placeholder='Business Name' value={businessName} onChange={(e)=>setBusinessName(e.target.value)}
-    />
-    <input 
-      type="text" 
-      className='w-full rounded-xl border border-zinc-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/80' 
-      placeholder='Support Email'  value={supportEmail} onChange={(e)=>setSupportEmail(e.target.value)}
-    />
-  </div>
-</div>
+      {/* Main Content */}
+      <div className='flex justify-center px-4 py-14 mt-20'>
+        <motion.div className='w-full max-w-3xl bg-white rounded-2xl shadow-xl p-10'>
 
-<div className='mb-10'>
-  <h1 className='text-lg font-medium mb-4'>Knowledge</h1>
-  <p className='text-sm text-zinc-500 mb-4'>Add FAQs, policies, delivery info, refunds, etc.</p>
-  <div className='space-y-4'>
-    <textarea 
-      className='w-full h-54 rounded-xl border border-zinc-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/80' 
-      placeholder={`Example:
+          <div className='mb-12'>
+            <h1 className='text-2xl font-semibold'>ChatBot Settings</h1>
+            <p className='text-zinc-500 mt-1'>
+              Manage your AI chatbot knowledge and business details
+            </p>
+          </div>
+
+          {/* Business Details */}
+          <div className='mb-10'>
+            <h2 className='text-lg font-medium mb-4'>Business Details</h2>
+
+            <div className='space-y-4'>
+              <input
+                type="text"
+                placeholder='Business Name'
+                className='w-full rounded-xl border border-zinc-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/80'
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+              />
+
+              <input
+                type="text"
+                placeholder='Support Email'
+                className='w-full rounded-xl border border-zinc-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/80'
+                value={supportEmail}
+                onChange={(e) => setSupportEmail(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Knowledge Section */}
+          <div className='mb-10'>
+            <h2 className='text-lg font-medium mb-4'>Knowledge</h2>
+
+            <p className='text-sm text-zinc-500 mb-4'>
+              Add FAQs, policies, delivery info, refunds, etc.
+            </p>
+
+            <textarea
+              className='w-full h-52 rounded-xl border border-zinc-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black/80'
+              placeholder={`Example:
 • Refund policy: 7 days return available
 • Delivery time: 3-5 working days
 • Cash on Delivery available
-• Support hours` }
-      onChange={(e)=>setKnowledge(e.target.value)}value={knowledge}
-    />
-  </div>
-</div>
+• Support hours`}
+              value={knowledge}
+              onChange={(e) => setKnowledge(e.target.value)}
+            />
+          </div>
 
+          {/* Save Button */}
+          <div className='flex items-center'>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              disabled={loading}
+              onClick={handleSettings}
+              className='px-6 py-3 rounded-lg bg-black text-white text-sm font-medium hover:bg-black/90 transition disabled:opacity-60'
+            >
+              {loading ? 'Saving...' : 'Save'}
+            </motion.button>
 
-<div className='flex items-center'>
+            {saved && (
+              <motion.span
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className='ml-4 text-sm text-green-600'
+              >
+                Settings saved!
+              </motion.span>
+            )}
+          </div>
 
-  <motion.button
-    whileHover={{scale:1.05}}
-    whileTap={{scale:0.97}}
-    disabled={loading}
-    onClick={handleSettings}
-    className='px-6 py-3 rounded-lg bg-black text-white text-sm font-medium hover:bg-black/90 transition disabled:opacity-60'
-  >
-    {loading ? 'Saving...' : 'Save'}
-  </motion.button>
-{saved && (
-  <motion.span
-        initial={{opacity:0, x:10}}
-        animate={{opacity:1, x:0}}
-        className='ml-4 text-sm text-green-600'
-      >
-        Settings saved!
-      </motion.span>)}
-      
-</div>
+        </motion.div>
+      </div>
 
-  </motion.div>
-</div>
-
-       </div>
-)
+    </div>
+  )
 }
 
 export default DashboardClient
