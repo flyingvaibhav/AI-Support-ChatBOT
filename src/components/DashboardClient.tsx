@@ -1,24 +1,27 @@
 'use client'
 import axios from 'axios'
 import { AnimatePresence, scale } from 'framer-motion'
+import { set } from 'mongoose'
 
 
 import { motion } from 'motion/react'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 
 
 
 function DashboardClient({ownerId}: {ownerId: string }) {
 
   const naviagte = useRouter()
-  const [businessName, setBusinessName] =useState(' ')
-const [supportEmail, setSupportEmail] =useState(' ')
-const [knowledge, setKnowledge] =useState(' ')
+  const [businessName, setBusinessName] =useState(" ")
+const [supportEmail, setSupportEmail] =useState(" ")
+const [knowledge, setKnowledge] =useState("")
 const[loading, setLoading] = useState(false)
-
+const [saved, setsaved] = useState(false)
 
 const handleSettings=async()=>{
+  setLoading(true)
+
    try {
     const result = await axios.post('/api/settings', {
       ownerId,
@@ -27,15 +30,38 @@ const handleSettings=async()=>{
       knowledge
     })
 console.log(result.data)
+setsaved(true)
 setLoading(false)
+setTimeout(() => {
+  setsaved(false)
+}, 3000);
     } catch (error) {
       console.log(error)
       setLoading(false)
     }
 }
 
+useEffect(()=>{
+  if(ownerId){
+    const handleGetDetails=async()=>{
+      try {
+    const result = await axios.post('/api/settings', {
+      ownerId
+    })
+    setBusinessName(result.data.businessName)
+    setSupportEmail(result.data.supportEmail)
+    setKnowledge(result.data.knowledge)
 
+    } catch (error) {
+      console.log(error)
+    }
+}
 
+handleGetDetails()    
+
+}
+
+},[ownerId])
   return (
     <div className='min-h-screen bg-zinc-50 text-zinc-900 '> 
     <motion.div
@@ -105,13 +131,22 @@ setLoading(false)
   >
     {loading ? 'Saving...' : 'Save'}
   </motion.button>
+{saved && (
+  <motion.span
+        initial={{opacity:0, x:10}}
+        animate={{opacity:1, x:0}}
+        className='ml-4 text-sm text-green-600'
+      >
+        Settings saved!
+      </motion.span>)}
+      
 </div>
 
   </motion.div>
 </div>
 
        </div>
-  )
+)
 }
 
 export default DashboardClient
