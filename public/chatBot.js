@@ -29,7 +29,7 @@ Object.assign(button.style,{
     zIndex: "999999",
 })
 
-document.body.append(button)
+document.body.appendChild(button)
 
 const box=document.createElement("div")
 
@@ -48,7 +48,55 @@ const box=document.createElement("div")
     zIndex: "999999",
     fontFamily: "Inter, system-ui, sans-serif",
 })
-box.innerHTML
+box.innerHTML = `<div style="
+    background:#000;
+    color:#fff;
+    padding:12px 14px;
+    font-size:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+">
+    <span>Customer Support</span>
+    <span id="chat-close" style="cursor:pointer;font-size:16px">❌</span>
+</div>
+<div id="chat-messages" style="
+    flex:1;
+    padding:14px;
+    overflow-y:auto;
+    background:#f9f9f9;
+    display:flex;
+    flex-direction:column;
+">
+</div>
+
+
+<div style="
+    display:flex;
+    border-top:1px solid #e5e7eb;
+    padding:8px;
+    gap:6px;
+">
+<input id="chat-input" type="text"
+style="    flex:1;
+    padding:8px 12px;
+    border:1px solid #e5e7eb;
+    border-radius:6px;
+    font-size:14px;
+    outline:none;"
+
+placeholder="Type a message"/>
+<button id="chat-send" style="padding:8px 12px; 
+background:#000;
+ color:#fff; border:none;
+ border-radius:6px;
+ cursor:pointer;
+ ">send</button>
+</div>
+
+
+`
+
 
 document.body.appendChild(box)
 })()
