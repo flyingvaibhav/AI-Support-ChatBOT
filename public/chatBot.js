@@ -112,6 +112,62 @@ document.querySelector("#chat-close").onclick=()=>{
 
 const input=document.querySelector("#chat-input")
 const sendBtn=document.querySelector("#chat-send")
+const messageArea=document.querySelector("#chat-messages")
+function addMessage(text, from) {
+    const bubble = document.createElement("div")
+    bubble.innerHTML = text
+    Object.assign(bubble.style, {
+        maxWidth: "78%",
+        padding: "8px 12px",
+        borderRadius: "14px",
+        fontSize: "13px",
+        lineHeight: "1.4",
+        marginBottom: "8px",
+        alignSelf: from === "user" ? "flex-end" : "flex-start",
+        background: from === "user" ? "#000" : "#e5e7eb",
+        color: from === "user" ? "#fff" : "#111",
 
+        /* bubble direction polish */
+        borderTopRightRadius: from === "user" ? "4px" : "14px",
+        borderTopLeftRadius: from === "user" ? "14px" : "4px",
+    })
+    messageArea.appendChild(bubble)
+    messageArea.scrollTop = messageArea.scrollHeight
+
+}
+sendBtn.onclick = async () => {
+    const text = input.value.trim()
+    if (!text) return
+
+    addMessage(text, "user")
+    input.value = ""
+
+    const typing=document.createElement("div")
+    typing.innerHTML="Typing..."
+    Object.assign(typing.style,{
+        fontSize: "12px",
+        color: "#6b7280",
+        marginBottom: "8px",
+        alignSelf: "flex-start",
+    })
+    messageArea.appendChild(typing)
+    messageArea.scrollTop=messageArea.scrollHeight
+
+    try {
+    const response=await fetch(api_Url,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            ownerId,message:text
+        })
+    })
+
+    const data=await response.json()
+    addMessage(data,"ai")
+} catch (error) {
+    console.error("Error fetching AI response:", error)
+
+}
+}
 
 })()
