@@ -99,4 +99,19 @@ background:#000;
 
 
 document.body.appendChild(box)
+
+
+button.onclick=()=>{
+    box.style.display=box.style.display==="none"?"flex":"none"
+}
+
+document.querySelector("#chat-close").onclick=()=>{
+    box.style.display="none"
+}
+
+
+const input=document.querySelector("#chat-input")
+const sendBtn=document.querySelector("#chat-send")
+
+
 })()
