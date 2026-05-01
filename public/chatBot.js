@@ -14,7 +14,7 @@
 Object.assign(button.style,{
     position: "fixed",
     bottom: "24px",
-    right: "24px",
+    right: "26px",
     width: "56px",
     height: "56px",
     borderRadius: "50%",
