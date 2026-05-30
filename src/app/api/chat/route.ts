@@ -1,4 +1,6 @@
 import Settings from "@/model/settings.model";
+import Conversation from "@/model/conversation.model";
+import connectDb from "@/lib/db";
 import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,6 +14,8 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    await connectDb()
 
     const setting = await Settings.findOne({ ownerId });
     if (!setting) {
@@ -62,8 +66,25 @@ const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY!});
     contents: prompt,
   });
   console.log(response.text);
+  // extract text safely
+  const aiText = (response as any).text ?? JSON.stringify(response)
 
-return NextResponse.json(response);
+  // save messages to conversation
+  try {
+    let conversation = await Conversation.findOne({ ownerId })
+    if (!conversation) {
+      conversation = await Conversation.create({ ownerId, messages: [] })
+    }
+
+    conversation.messages.push({ role: 'user', text: message })
+    conversation.messages.push({ role: 'assistant', text: aiText })
+    await conversation.save()
+
+    return NextResponse.json({ answer: aiText, conversation })
+  } catch (err) {
+    console.log('conversation save error', err)
+    return NextResponse.json({ answer: aiText })
+  }
 
   } catch (error) {
     // Error handling logic
