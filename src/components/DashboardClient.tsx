@@ -14,6 +14,8 @@ function DashboardClient({ ownerId }: { ownerId: string }) {
   const [knowledge, setKnowledge] = useState("")
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [conversation, setConversation] = useState<any | null>(null)
+  const [loadingConvo, setLoadingConvo] = useState(false)
 
   // 🔥 Save Settings
 
@@ -65,6 +67,25 @@ function DashboardClient({ ownerId }: { ownerId: string }) {
     handleGetDetails()
 
   }, [ownerId])
+
+  // Fetch conversation history
+  useEffect(() => {
+    if (!ownerId) return
+
+    const fetchConversation = async () => {
+      setLoadingConvo(true)
+      try {
+        const res = await axios.get('/api/conversations', { params: { ownerId } })
+        setConversation(res.data)
+      } catch (err) {
+        console.log('fetch conversation error', err)
+      } finally {
+        setLoadingConvo(false)
+      }
+    }
+
+    fetchConversation()
+  }, [ownerId, saved])
 
   return (
     <div className='min-h-screen bg-zinc-50 text-zinc-900'>
@@ -161,6 +182,32 @@ function DashboardClient({ ownerId }: { ownerId: string }) {
               >
                 Settings saved!
               </motion.span>
+            )}
+          </div>
+
+          {/* Conversation History */}
+          <div className='mt-8'>
+            <h2 className='text-lg font-medium mb-4'>Conversation History</h2>
+
+            {loadingConvo ? (
+              <div className='text-sm text-zinc-500'>Loading...</div>
+            ) : conversation && conversation.messages && conversation.messages.length ? (
+              <div className='space-y-3 max-h-64 overflow-y-auto'>
+                {conversation.messages.slice().reverse().slice(0, 50).map((m: any, idx: number) => (
+                  <div key={idx} className={m.role === 'user' ? 'text-right' : 'text-left'}>
+                    <div
+                      className={`inline-block px-4 py-2 rounded-xl ${m.role === 'user' ? 'bg-zinc-100' : 'bg-black text-white'}`}
+                    >
+                      <div className='text-sm'>{m.text}</div>
+                      <div className='text-xs text-zinc-400 mt-1'>
+                        {new Date(m.createdAt || conversation.updatedAt || conversation.createdAt).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className='text-sm text-zinc-500'>No conversations yet.</div>
             )}
           </div>
 
