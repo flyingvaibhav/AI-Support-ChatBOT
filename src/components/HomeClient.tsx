@@ -7,7 +7,7 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation' 
 
 function HomeClient({ email }: { email: string}) {
-  const handlelogin =()=>{
+  const handleLogin =()=>{
     window.location.href = '/api/auth/login'
  }
   const firstLetter = email ? email.charAt(0).toUpperCase() : '';
@@ -17,7 +17,7 @@ function HomeClient({ email }: { email: string}) {
   useEffect(() => {
     const handler=(e: MouseEvent) => 
       {
-        if(popupRef.current && popupRef.current.contains(e.target as Node))
+        if(popupRef.current && !popupRef.current.contains(e.target as Node))
         setOpen(false)
 
   }
@@ -36,7 +36,7 @@ function HomeClient({ email }: { email: string}) {
       },
       {
         title:"Admin Controlled",
-        desc:"You control excatly what AI knows and answers."
+        desc:"You control exactly what AI knows and answers."
       },
       {
         title:"Always Online",
@@ -63,7 +63,7 @@ window.location.href ="/"
     >
       <div className='max-w-7xl mx-auto px-6 h-16 flex items-center justify-between'>
         <div className='text-lg font-semibold tracking-tight'>Support <span className='text-zinc-400'>AI</span></div>{email ? <div className='relative' ref={popupRef}>
-          <button className='w-10 h-10 rounded-full bg-black text-white flex items-center justify-center  font-semiblod hover:scale-105 transition' onClick={()=>setOpen(true)}>{firstLetter}</button>
+          <button className='w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-semibold hover:scale-105 transition' onClick={()=>setOpen(true)}>{firstLetter}</button>
       <AnimatePresence> {open &&
       ( <motion.div 
  initial={{opacity:0,y:-7}}
@@ -82,6 +82,7 @@ window.location.href ="/"
        
          className ='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors'
         onClick={handlelogin}
+        onClick={handleLogin}
         >Login</button>}
         
       </div>
