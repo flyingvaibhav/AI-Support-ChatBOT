@@ -13,8 +13,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Support.ai",
-  description: "Chatbot that you can embeed in your website to provide customer support.",
+  title: "Support.AI - Customer Support Chatbot",
+  description: "Embed a powerful AI-powered customer support chatbot on your website to provide 24/7 instant support to customers.",
+  keywords: ["chatbot", "customer support", "AI", "support automation"],
+  openGraph: {
+    title: "Support.AI",
+    description: "AI-powered customer support chatbot for your website",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
