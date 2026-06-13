@@ -15,6 +15,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json(
+        { message: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
     await connectDb()
 
     const setting = await Settings.findOne({ ownerId });
@@ -65,9 +72,8 @@ const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY!});
     model: "gemini-2.5-flash-preview",
     contents: prompt,
   });
-  console.log(response.text);
   // extract text safely
-  const aiText = (response as any).text ?? JSON.stringify(response)
+  const aiText = (response as any).text ?? JSON.stringify(response);
 
   // save messages to conversation
   try {
@@ -80,19 +86,17 @@ const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY!});
     conversation.messages.push({ role: 'assistant', text: aiText })
     await conversation.save()
 
-    return NextResponse.json({ answer: aiText, conversation })
+    return NextResponse.json({ answer: aiText });
   } catch (err) {
-    console.log('conversation save error', err)
-    return NextResponse.json({ answer: aiText })
+    console.error('Conversation save error:', err);
+    return NextResponse.json({ answer: aiText });
   }
 
   } catch (error) {
-    // Error handling logic
-        return NextResponse.json(
-            { message: `chat error ${error}` },
-            { status: 500 }
-          );
-
-
+    console.error('Chat error:', error);
+    return NextResponse.json(
+      { message: 'Failed to process chat request' },
+      { status: 500 }
+    );
   }
 }
